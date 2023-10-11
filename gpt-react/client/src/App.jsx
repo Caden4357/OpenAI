@@ -28,12 +28,13 @@ function App() {
       let formData = new FormData();
       formData.append("image", file);
       const response = await axios.post('http://localhost:8000/api/createProduct', formData)
-      const gptRespponse = await openai.chat.completions.create({
+      const gptResponse = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: `Analyze this photo and provide a detailed ingredients list for it with nutrition infor: ${response.data.image}` }],
+        messages: [{ role: "user", content: `Analyze this photo and provide to your best knowledge what you believe to be the total; calories, carbs, fat, sugar, protein and sodium per serving do not respond with anything besides the listed things above and please put them in a JS object: ${response.data.image}` }],
       });
-      setResponse(gptRespponse.choices[0].message.content);
-      console.log(response.data.image)
+      let gptObject = gptResponse.choices[0].message.content
+      setResponse(JSON.parse(gptObject));
+      console.log(gptResponse)
     }
     catch (err) {
       console.log(err)
@@ -63,7 +64,20 @@ function App() {
 
       </form>
       {
-        response && <p>{response}</p>
+        response && 
+        <div>
+          <p>Estimated Calories Per Serving: {response['calories']}</p>
+          <p>Estimated Carbs Per Serving: {response['carbs']}</p>
+          <p>Estimated Fat Per Serving: {response['fat']}</p>
+          <p>Estimated Sugar Per Serving: {response['sugar']}</p>
+          <p>Estimated Protein Per Serving: {response['protein']}</p>
+          <p>Estimated Sodium Per Serving: {response['sodium']}</p>
+          <p>How many servings?</p>
+          <button>1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>4</button>
+        </div>
       }
     </>
   )
