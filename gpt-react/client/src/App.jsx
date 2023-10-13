@@ -28,7 +28,7 @@ function App() {
       const response = await axios.post('http://localhost:8000/api/createProduct', formData)
       const gptResponse = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: `Analyze this photo and provide to your best knowledge what you believe to be the total; calories, carbs, fat, sugar, protein and sodium per serving do not respond with anything besides the listed things above and please put them in a JS object: ${response.data.image}` }],
+        messages: [{ role: "user", content: `Analyze this photo and provide to your best knowledge what you believe to be the serving size, calories, carbs, fat, sugar, protein and sodium per serving do not respond with anything besides the listed things above and please put them in a JS object: ${response.data.image}`}],
       });
       let gptObject = gptResponse.choices[0].message.content
       setResponse(JSON.parse(gptObject));
@@ -74,7 +74,7 @@ function App() {
           <hr />
           <div className='d-flex justify-content-between'>
             <p className='fw-bold'>Serving Size: </p>
-            <p className='fw-bold'>1 Slice</p>
+            <p className='fw-bold'>{response['servingSize']}</p>
           </div>
           <div className='bg-black w-100' style={{ height: '10px' }}></div>
           <p className='text-start fw-bold'>Amounts per serving</p>
