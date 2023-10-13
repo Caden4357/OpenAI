@@ -28,9 +28,11 @@ function App() {
       const response = await axios.post('http://localhost:8000/api/createProduct', formData)
       const gptResponse = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: `Analyze this photo and provide to your best knowledge what you believe to be the serving size, calories, carbs, fat, sugar, protein and sodium per serving do not respond with anything besides the listed things above and please put them in a JS object: ${response.data.image}`}],
+        messages: [{role:'system', content:'Your a nutritionist and a client sends you a photo of a food item and asks you to analyze it and provide the nutrition facts per serving. Respond with only 1 JSON object with the following keys: servingSize, totalCalories, fat, saturatedFat totalCarbohydrates, sugar, fiber, protein, sodium, cholesterol, per serving. the values to the keys should be only numbers.'},
+          { role: "user", content: `${response.data.image}`}],
       });
       let gptObject = gptResponse.choices[0].message.content
+      console.log(gptObject);
       setResponse(JSON.parse(gptObject));
       setSearch('')
       setFile(null)
@@ -80,23 +82,32 @@ function App() {
           <p className='text-start fw-bold'>Amounts per serving</p>
           <div className='d-flex justify-content-between'>
             <h2 className='fw-bold'>Calories: </h2>
-            <h2>{response['calories']}</h2>
+            <h2>{response['totalCalories']}</h2>
           </div>
           <div className='bg-black w-100' style={{ height: '5px' }}></div>
           <div>
-            <b>Total Fat: </b><span>{response['fat']}g</span>
+            <b>Fat: </b><span>{response['fat']}</span>
           </div>
           <div>
-            <b>Total Carbohydrate: </b><span>{response['carbs']}g</span>
+            <b>Saturated Fat: </b><span>{response['saturatedFat']}</span>
           </div>
           <div>
-            <b>Sodium: </b><span>{response['sodium']}g</span>
+            <b>Total Carbohydrate: </b><span>{response['totalCarbohydrates']}</span>
           </div>
           <div>
-            <b>Protein: </b><span>{response['protein']}g</span>
+            <b>Fiber: </b><span>{response['fiber']}</span>
           </div>
           <div>
-            <b>Sugar: </b><span>{response['sugar']}g</span>
+            <b>Sodium: </b><span>{response['sodium']}</span>
+          </div>
+          <div>
+            <b>Protein: </b><span>{response['protein']}</span>
+          </div>
+          <div>
+            <b>Sugar: </b><span>{response['sugar']}</span>
+          </div>
+          <div>
+            <b>Cholesterol: </b><span>{response['cholesterol']}</span>
           </div>
           <p>How many servings?</p>
           <button onClick={() => changeServingSize(1)}>1</button>
