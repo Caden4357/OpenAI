@@ -8,14 +8,12 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true
 });
 function App() {
+  let singleServing = {}
   const [search, setSearch] = useState('')
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [response, setResponse] = useState('')
 
-  // openai.models.list().then(models => {
-  //   console.log(models);
-  // } );
   const handleImageChange = (e) => {
     setFile(e.target.files[0])
     // ? create object url for image preview
@@ -34,18 +32,24 @@ function App() {
       });
       let gptObject = gptResponse.choices[0].message.content
       setResponse(JSON.parse(gptObject));
-      console.log(gptResponse)
+      setSearch('')
+      setFile(null)
     }
     catch (err) {
       console.log(err)
     }
-
-    // const response = await openai.chat.completions.create({
-    //   model: "gpt-3.5-turbo",
-    //   messages: [{ role: "user", content: search}],
-    // });
-    setSearch('')
-    setFile(null)
+  }
+  // ! Still working on this 
+  const changeServingSize = (serving) => {
+    for (let key in response) {
+      setResponse(prev => {
+        return {
+          ...prev,
+          [key]: prev[key] * serving
+        }
+      }
+      )
+    }
   }
   return (
     <>
@@ -64,19 +68,41 @@ function App() {
 
       </form>
       {
-        response && 
-        <div>
-          <p>Estimated Calories Per Serving: {response['calories']}</p>
-          <p>Estimated Carbs Per Serving: {response['carbs']}</p>
-          <p>Estimated Fat Per Serving: {response['fat']}</p>
-          <p>Estimated Sugar Per Serving: {response['sugar']}</p>
-          <p>Estimated Protein Per Serving: {response['protein']}</p>
-          <p>Estimated Sodium Per Serving: {response['sodium']}</p>
+        response &&
+        <div className='mt-5 p-2 border bg-white text-dark w-75 mx-auto'>
+          <h2>Nutrition Facts</h2>
+          <hr />
+          <div className='d-flex justify-content-between'>
+            <p className='fw-bold'>Serving Size: </p>
+            <p className='fw-bold'>1 Slice</p>
+          </div>
+          <div className='bg-black w-100' style={{ height: '10px' }}></div>
+          <p className='text-start fw-bold'>Amounts per serving</p>
+          <div className='d-flex justify-content-between'>
+            <h2 className='fw-bold'>Calories: </h2>
+            <h2>{response['calories']}</h2>
+          </div>
+          <div className='bg-black w-100' style={{ height: '5px' }}></div>
+          <div>
+            <b>Total Fat: </b><span>{response['fat']}g</span>
+          </div>
+          <div>
+            <b>Total Carbohydrate: </b><span>{response['carbs']}g</span>
+          </div>
+          <div>
+            <b>Sodium: </b><span>{response['sodium']}g</span>
+          </div>
+          <div>
+            <b>Protein: </b><span>{response['protein']}g</span>
+          </div>
+          <div>
+            <b>Sugar: </b><span>{response['sugar']}g</span>
+          </div>
           <p>How many servings?</p>
-          <button>1</button>
-          <button>2</button>
-          <button>3</button>
-          <button>4</button>
+          <button onClick={() => changeServingSize(1)}>1</button>
+          <button onClick={() => changeServingSize(2)}>2</button>
+          <button onClick={() => changeServingSize(3)}>3</button>
+          <button onClick={() => changeServingSize(4)}>4</button>
         </div>
       }
     </>
