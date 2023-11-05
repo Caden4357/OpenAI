@@ -6,11 +6,23 @@
         },
         {
             "role": "user",
-            "content": "What's the capital of France?"
+            "content": "https://www.onceuponachef.com/images/2015/11/Pumpkin-Pie-1-scaled.jpg"
         },
         {
             "role": "assistant",
-            "content": "Paris, as if everyone doesn't know that already."
+            "content": {
+                "foodItem": "Pumpkin Pie",
+                "servingSize": "1 slice",
+                "totalCalories": "335",
+                "fat": "15g",
+                "saturatedFat": "8g",
+                "totalCarbohydrates": "45g",
+                "sugar": "27g",
+                "fiber": "2g",
+                "protein": "6g",
+                "sodium": "287mg",
+                "cholesterol": "103mg"
+            }
         }
     ]
 }
