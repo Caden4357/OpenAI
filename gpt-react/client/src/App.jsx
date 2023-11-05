@@ -28,7 +28,7 @@ function App() {
       const response = await axios.post('http://localhost:8000/api/createProduct', formData)
       const gptResponse = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{role:'system', content:'Your a nutritionist and a client sends you a photo of a food item and asks you to analyze it and provide the nutrition facts per serving. Respond with only 1 JSON object with the following keys: servingSize, totalCalories, fat, saturatedFat totalCarbohydrates, sugar, fiber, protein, sodium, cholesterol, per serving. the values to the keys should be only numbers.'},
+        messages: [{role:'system', content:'Your a nutritionist and a client sends you a photo of a food item and asks you to analyze it first figure out what the food is and then provide the nutrition facts per serving. Respond with only 1 JSON object with the following keys: servingSize, totalCalories, fat, saturatedFat totalCarbohydrates, sugar, fiber, protein, sodium and cholesterol, per serving and what you think the food is.'},
           { role: "user", content: `${response.data.image}`}],
       });
       let gptObject = gptResponse.choices[0].message.content
