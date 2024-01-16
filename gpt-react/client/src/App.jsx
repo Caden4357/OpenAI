@@ -25,19 +25,20 @@ function App() {
     try {
       let formData = new FormData();
       formData.append("image", file);
-      // const response = await axios.post('http://localhost:8000/api/createProduct', formData)
-      // const gptResponse = await openai.chat.completions.create({
-      //   model: "gpt-4-vision-preview",
-      //   messages: [{role:'system', content:'Your a nutritionist and a client sends you a photo of a food item and asks you to analyze it first figure out what the food is and then provide the nutrition facts per serving. Respond with only 1 JSON object with the following keys: servingSize, totalCalories, fat, saturatedFat totalCarbohydrates, sugar, fiber, protein, sodium and cholesterol, per serving and what you think the food is.'},
-      //     { role: "user", content: }],
-      // });
-      const gptResponse = await openai.chat.completions.create(
-        {'model': 'gpt-4-vision-preview', 
-        'messages': [{'role':'user', 
-        content:['Analyze the image and tell me what it is along with the nutrition information', {'type': 'image_url', 'image_url': {'url': 'https://www.tasteofhome.com/wp-content/uploads/2023/03/KFC-Double-Down-Sandwich-Resize-Crop-DH-TOH-Courtesy-KFC.jpg'}}]}], max_tokens:500}
-        );
-      console.log(gptResponse);
-      setResponse(gptResponse.choices[0].message.content)
+      axios.post('http://localhost:8000/analyzeImage', formData)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      // const gptResponse = await openai.chat.completions.create(
+      //   {'model': 'gpt-4-vision-preview', 
+      //   'messages': [{'role':'user', 
+      //   content:['Analyze the image and tell me what it is along with the nutrition information', {'type': 'image_url', 'image_url': {'url': 'https://www.tasteofhome.com/wp-content/uploads/2023/03/KFC-Double-Down-Sandwich-Resize-Crop-DH-TOH-Courtesy-KFC.jpg'}}]}], max_tokens:500}
+      //   );
+      // console.log(gptResponse);
+      // setResponse(gptResponse.choices[0].message.content)
       // let gptObject = gptResponse.choices[0].message.content
       // console.log(gptObject);
       // setResponse(JSON.parse(gptObject));
