@@ -25,17 +25,24 @@ function App() {
     try {
       let formData = new FormData();
       formData.append("image", file);
-      const response = await axios.post('http://localhost:8000/api/createProduct', formData)
-      const gptResponse = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [{role:'system', content:'Your a nutritionist and a client sends you a photo of a food item and asks you to analyze it first figure out what the food is and then provide the nutrition facts per serving. Respond with only 1 JSON object with the following keys: servingSize, totalCalories, fat, saturatedFat totalCarbohydrates, sugar, fiber, protein, sodium and cholesterol, per serving and what you think the food is.'},
-          { role: "user", content: `${response.data.image}`}],
-      });
-      let gptObject = gptResponse.choices[0].message.content
-      console.log(gptObject);
-      setResponse(JSON.parse(gptObject));
-      setSearch('')
-      setFile(null)
+      // const response = await axios.post('http://localhost:8000/api/createProduct', formData)
+      // const gptResponse = await openai.chat.completions.create({
+      //   model: "gpt-4-vision-preview",
+      //   messages: [{role:'system', content:'Your a nutritionist and a client sends you a photo of a food item and asks you to analyze it first figure out what the food is and then provide the nutrition facts per serving. Respond with only 1 JSON object with the following keys: servingSize, totalCalories, fat, saturatedFat totalCarbohydrates, sugar, fiber, protein, sodium and cholesterol, per serving and what you think the food is.'},
+      //     { role: "user", content: }],
+      // });
+      const gptResponse = await openai.chat.completions.create(
+        {'model': 'gpt-4-vision-preview', 
+        'messages': [{'role':'user', 
+        content:['Analyze the image and tell me what it is along with the nutrition information', {'type': 'image_url', 'image_url': {'url': 'https://www.tasteofhome.com/wp-content/uploads/2023/03/KFC-Double-Down-Sandwich-Resize-Crop-DH-TOH-Courtesy-KFC.jpg'}}]}], max_tokens:500}
+        );
+      console.log(gptResponse);
+      setResponse(gptResponse.choices[0].message.content)
+      // let gptObject = gptResponse.choices[0].message.content
+      // console.log(gptObject);
+      // setResponse(JSON.parse(gptObject));
+      // setSearch('')
+      // setFile(null)
     }
     catch (err) {
       console.log(err)
@@ -71,50 +78,51 @@ function App() {
       </form>
       {
         response &&
-        <div className='mt-5 p-2 border bg-white text-dark w-75 mx-auto'>
-          <h2>Nutrition Facts</h2>
-          <hr />
-          <div className='d-flex justify-content-between'>
-            <p className='fw-bold'>Serving Size: </p>
-            <p className='fw-bold'>{response['servingSize']}</p>
-          </div>
-          <div className='bg-black w-100' style={{ height: '10px' }}></div>
-          <p className='text-start fw-bold'>Amounts per serving</p>
-          <div className='d-flex justify-content-between'>
-            <h2 className='fw-bold'>Calories: </h2>
-            <h2>{response['totalCalories']}</h2>
-          </div>
-          <div className='bg-black w-100' style={{ height: '5px' }}></div>
-          <div>
-            <b>Fat: </b><span>{response['fat']}</span>
-          </div>
-          <div>
-            <b>Saturated Fat: </b><span>{response['saturatedFat']}</span>
-          </div>
-          <div>
-            <b>Total Carbohydrate: </b><span>{response['totalCarbohydrates']}</span>
-          </div>
-          <div>
-            <b>Fiber: </b><span>{response['fiber']}</span>
-          </div>
-          <div>
-            <b>Sodium: </b><span>{response['sodium']}</span>
-          </div>
-          <div>
-            <b>Protein: </b><span>{response['protein']}</span>
-          </div>
-          <div>
-            <b>Sugar: </b><span>{response['sugar']}</span>
-          </div>
-          <div>
-            <b>Cholesterol: </b><span>{response['cholesterol']}</span>
-          </div>
-          <p>How many servings?</p>
-          <button onClick={() => changeServingSize(1)}>1</button>
-          <button onClick={() => changeServingSize(2)}>2</button>
-          <button onClick={() => changeServingSize(3)}>3</button>
-          <button onClick={() => changeServingSize(4)}>4</button>
-        </div>
+        <p>{response}</p>
+        // <div className='mt-5 p-2 border bg-white text-dark w-75 mx-auto'>
+        //   <h2>Nutrition Facts</h2>
+        //   <hr />
+        //   <div className='d-flex justify-content-between'>
+        //     <p className='fw-bold'>Serving Size: </p>
+        //     <p className='fw-bold'>{response['servingSize']}</p>
+        //   </div>
+        //   <div className='bg-black w-100' style={{ height: '10px' }}></div>
+        //   <p className='text-start fw-bold'>Amounts per serving</p>
+        //   <div className='d-flex justify-content-between'>
+        //     <h2 className='fw-bold'>Calories: </h2>
+        //     <h2>{response['totalCalories']}</h2>
+        //   </div>
+        //   <div className='bg-black w-100' style={{ height: '5px' }}></div>
+        //   <div>
+        //     <b>Fat: </b><span>{response['fat']}</span>
+        //   </div>
+        //   <div>
+        //     <b>Saturated Fat: </b><span>{response['saturatedFat']}</span>
+        //   </div>
+        //   <div>
+        //     <b>Total Carbohydrate: </b><span>{response['totalCarbohydrates']}</span>
+        //   </div>
+        //   <div>
+        //     <b>Fiber: </b><span>{response['fiber']}</span>
+        //   </div>
+        //   <div>
+        //     <b>Sodium: </b><span>{response['sodium']}</span>
+        //   </div>
+        //   <div>
+        //     <b>Protein: </b><span>{response['protein']}</span>
+        //   </div>
+        //   <div>
+        //     <b>Sugar: </b><span>{response['sugar']}</span>
+        //   </div>
+        //   <div>
+        //     <b>Cholesterol: </b><span>{response['cholesterol']}</span>
+        //   </div>
+        //   <p>How many servings?</p>
+        //   <button onClick={() => changeServingSize(1)}>1</button>
+        //   <button onClick={() => changeServingSize(2)}>2</button>
+        //   <button onClick={() => changeServingSize(3)}>3</button>
+        //   <button onClick={() => changeServingSize(4)}>4</button>
+        // </div>
       }
     </>
   )
